@@ -11,7 +11,7 @@ from langchain.prompts import PromptTemplate
 from dotenv import load_dotenv
 
 load_dotenv()
-# os.getenv("GOOGLE_API_KEY")
+os.getenv("GOOGLE_API_KEY")
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
 def get_pdf_text(pdf_docs):
@@ -39,8 +39,8 @@ def get_vector_store(text_chunks):
 def get_conversational_chain():
 
     prompt_template = """
-    Answer the question as detailed as possible from the provided context, make sure to provide all the details, if the answer is not in
-    provided context just say, "answer is not available in the context", don't provide the wrong answer\n\n
+    Answer the question as detailed as possible from the provided context, making sure to provide all the details. Imagine you are a medical expert reviewing Youssef Hamdi's recent microbiome analysis report indicating dysbiosis and inflammation consistent with Crohn's disease. After reviewing the report, please provide personalized treatment recommendations and the best dietary regimen for Youssef Hamdi to follow this week to effectively manage his condition and improve his health.
+\n\n
     Context:\n {context}?\n
     Question: \n{question}\n
 
@@ -59,7 +59,7 @@ def get_conversational_chain():
 def user_input(user_question):
     embeddings = GoogleGenerativeAIEmbeddings(model = "models/embedding-001")
     
-    new_db = FAISS.load_local("faiss_index", embeddings)
+    new_db = FAISS.load_local("faiss_index", embeddings, allow_dangerous_deserialization=True)
     docs = new_db.similarity_search(user_question)
 
     chain = get_conversational_chain()
@@ -76,17 +76,17 @@ def user_input(user_question):
 
 
 def main():
-    st.set_page_config("Multi PDF Chatbot", page_icon = ":scroll:")
-    st.header("Multi-PDF's 📚 - Chat Agent 🤖 ")
+    st.set_page_config("Let's Chat about your health", page_icon = ":scroll:")
+    st.header("MicrobiomAI ")
 
-    user_question = st.text_input("Ask a Question from the PDF Files uploaded .. ✍️📝")
+    user_question = st.text_input("Ask me anything after submitting your report .. ✍️")
 
     if user_question:
         user_input(user_question)
 
     with st.sidebar:
 
-        st.image("img/Robot.jpg")
+        st.image("img/Robott.jpg")
         st.write("---")
         
         st.title("📁 PDF File's Section")
@@ -99,15 +99,12 @@ def main():
                 st.success("Done")
         
         st.write("---")
-        st.image("img/gkj.jpg")
-        st.write("AI App created by @ Gurpreet Kaur")  # add this line to display the image
+         # add this line to display the image
 
 
     st.markdown(
         """
-        <div style="position: fixed; bottom: 0; left: 0; width: 100%; background-color: #0E1117; padding: 15px; text-align: center;">
-            © <a href="https://github.com/gurpreetkaurjethra" target="_blank">Gurpreet Kaur Jethra</a> | Made with ❤️
-        </div>
+        
         """,
         unsafe_allow_html=True
     )
